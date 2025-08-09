@@ -1,4 +1,5 @@
-import { useEffect, useState, type ReactElement } from "react";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import UserHomePage from "./pages/UserHomePage";
 import AdminHomePage from "./pages/AdminHomePage";
 import LoginPage from "./pages/LoginPage";
@@ -9,13 +10,11 @@ import Header from "./components/Header";
 import { setAuthToken, logout, getProfile } from "./services/api";
 import "./App.css";
 
-function App() {
+function AppRoutes() {
   const [token, setToken] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [nome, setNome] = useState<string | null>(null);
-  const [mode, setMode] = useState<
-    "welcome" | "login" | "register" | "profile"
-  >("welcome");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedToken = sessionStorage.getItem("token");
@@ -34,6 +33,7 @@ function App() {
           handleLogout();
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = () => {
@@ -41,77 +41,72 @@ function App() {
     setAuthToken("");
     setToken(null);
     setIsAdmin(false);
-    setMode("welcome");
     setNome(null);
     sessionStorage.removeItem("token");
+    navigate("/");
   };
 
-  let content: ReactElement;
-  if (!token) {
-    if (mode === "login") {
-      content = (
-        <>
-          <LoginPage
-            onLogged={(t, admin, _mail, nome) => {
-              void _mail;
-              setAuthToken(t);
-              setToken(t);
-              setIsAdmin(admin);
-              setNome(nome);
-              sessionStorage.setItem("token", t);
-            }}
-            onBackToHome={() => setMode("welcome")}
-          />
-          <button
-            onClick={() => setMode("register")}
-            className="mt-4 text-white bg-green-600 hover:bg-green-700 px-12 py-2 rounded"
-          >
-            Registrati
-          </button>
-        </>
-      );
-    } else if (mode === "register") {
-      content = (
-        <>
-          <RegisterPage
-            onRegistered={(t, _mail) => {
-              void _mail;
-              setAuthToken(t);
-              setToken(t);
-              setIsAdmin(false);
-              sessionStorage.setItem("token", t);
-            }}
-          />
-          <button
-            onClick={() => setMode("login")}
-            className="mt-4 text-white bg-green-600 hover:bg-green-700 px-12 py-2 rounded"
-          >
-            Accedi
-          </button>
-        </>
-      );
-    } else {
-      content = <WelcomePage />;
-    }
-  } else {
-    if (mode === "profile") {
-      content = <UserUpdate />;
-    } else {
-      content = isAdmin ? <AdminHomePage /> : <UserHomePage />;
-    }
-  }
-
   return (
-    <div>
-      <Header
-        nome={token && nome ? nome : undefined}
-        onLogin={() => setMode("login")}
-        onLogout={handleLogout}
-        onProfile={() => setMode("profile")}
-      />
-      {content}
-    </div>
+    <>
+      <Header nome={token && nome ? nome : undefined} onLogout={handleLogout} />
+      <Routes>
+        <Route path="/" element={<WelcomePage />} />
+        <Route
+          path="/login"
+          element={
+            <LoginPage
+              onLogged={(t, admin, _mail, nome) => {
+                void _mail;
+                setAuthToken(t);
+                setToken(t);
+                setIsAdmin(admin);
+                setNome(nome);
+                sessionStorage.setItem("token", t);
+                navigate("/home");
+              }}
+            />
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <RegisterPage
+              onRegistered={(t, _mail) => {
+                void _mail;
+                setAuthToken(t);
+                setToken(t);
+                setIsAdmin(false);
+                sessionStorage.setItem("token", t);
+                navigate("/home");
+              }}
+            />
+          }
+        />
+        <Route
+          path="/profile"
+          element={token ? <UserUpdate /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/home"
+          element={
+            token ? (
+              isAdmin ? <AdminHomePage /> : <UserHomePage />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}
+
