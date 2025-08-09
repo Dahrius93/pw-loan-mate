@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { createLoanRequest } from "../services/api";
-import SuccessModal from "./SuccessModal";
 
 interface LoanFormProps {
   onCreated: () => void;
@@ -10,7 +9,6 @@ interface LoanFormProps {
 export default function LoanForm({ onCreated, onClose }: LoanFormProps) {
   const [importo, setImporto] = useState("");
   const [motivo, setMotivo] = useState("");
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +18,6 @@ export default function LoanForm({ onCreated, onClose }: LoanFormProps) {
     setImporto("");
     setMotivo("");
     onCreated();
-    setShowSuccessModal(true);
   };
 
   return (
@@ -94,12 +91,6 @@ export default function LoanForm({ onCreated, onClose }: LoanFormProps) {
           Invia richiesta
         </button>
       </form>
-
-      <SuccessModal
-        show={showSuccessModal}
-        message="Richiesta inviata con successo!"
-        onClose={() => setShowSuccessModal(false)}
-      />
     </div>
   );
 }

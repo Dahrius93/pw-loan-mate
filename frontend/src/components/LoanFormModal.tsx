@@ -27,7 +27,7 @@ export default function LoanFormModal({
         {/* close button, spostato fuori dal bordo con z alto */}
         <button
           onClick={onClose}
-          className="absolute -top-4 -right-4 z-50 h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-gray-200 hover:bg-gray-50"
+          className="absolute top-2 right-2 z-50 h-8 w-8 flex items-center justify-center rounded-full bg-white shadow-lg ring-1 ring-gray-200 hover:bg-gray-50"
           aria-label="Chiudi"
         >
           ✕
@@ -46,7 +46,6 @@ export default function LoanFormModal({
           onClose={() => {
             setShowSuccessModal(false);
             onClose();
-            onCreated();
           }}
         />
       </div>
