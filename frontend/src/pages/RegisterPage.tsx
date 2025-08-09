@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { register } from "../services/api";
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 }
 
 export default function RegisterPage({ onRegistered }: Props) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nome, setNome] = useState("");
@@ -130,6 +132,13 @@ export default function RegisterPage({ onRegistered }: Props) {
             className="bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
           >
             Registrati
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition duration-200"
+          >
+            Accedi
           </button>
         </form>
       </div>

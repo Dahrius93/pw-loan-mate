@@ -1,18 +1,14 @@
 import favicon from "../assets/favicon.png";
 
+import { useNavigate } from "react-router-dom";
+
 interface HeaderProps {
   nome?: string;
-  onLogin?: () => void;
   onLogout?: () => void;
-  onProfile?: () => void;
 }
 
-export default function Header({
-  nome,
-  onLogin,
-  onLogout,
-  onProfile,
-}: HeaderProps) {
+export default function Header({ nome, onLogout }: HeaderProps) {
+  const navigate = useNavigate();
   return (
     <header className="flex justify-between items-center bg-white/80 backdrop-blur-md p-4 shadow-md fixed top-0 left-0 right-0 w-full border-b border-gray-200 z-50">
       <div className="flex items-center space-x-3">
@@ -32,7 +28,7 @@ export default function Header({
               Benvenuto, <strong>{nome}</strong>
             </span>
             <button
-              onClick={onProfile}
+              onClick={() => navigate("/profile")}
               className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition-colors duration-200 shadow-sm"
             >
               Profilo
@@ -46,7 +42,7 @@ export default function Header({
           </>
         ) : (
           <button
-            onClick={onLogin}
+            onClick={() => navigate("/login")}
             className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors duration-200 shadow-sm"
           >
             Login

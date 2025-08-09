@@ -2,6 +2,7 @@
 // LoginPage
 // =============================
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { login } from "../services/api";
 
 interface Props {
@@ -11,10 +12,10 @@ interface Props {
     email: string,
     nome: string
   ) => void;
-  onBackToHome: () => void;
 }
 
-export default function LoginPage({ onLogged, onBackToHome }: Props) {
+export default function LoginPage({ onLogged }: Props) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -89,13 +90,22 @@ export default function LoginPage({ onLogged, onBackToHome }: Props) {
           Accedi
         </button>
 
-        <button
-          type="button"
-          onClick={onBackToHome}
-          className="w-full text-blue-700 hover:text-blue-800 hover:bg-blue-50 font-medium py-3 rounded-2xl transition-colors duration-200"
-        >
-          Torna alla home
-        </button>
+        <div className="flex flex-col space-y-3">
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="w-full text-blue-700 hover:text-blue-800 hover:bg-blue-50 font-medium py-3 rounded-2xl transition-colors duration-200"
+          >
+            Torna alla home
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+            className="w-full text-white bg-green-600 hover:bg-green-700 font-medium py-3 rounded-2xl transition-colors duration-200"
+          >
+            Registrati
+          </button>
+        </div>
       </form>
 
       <p className="mt-6 text-center text-xs text-gray-500">
