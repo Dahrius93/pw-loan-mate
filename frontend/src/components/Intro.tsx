@@ -2,11 +2,11 @@ export default function Intro() {
   return (
     <div className="w-full max-w-3xl mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-10 border border-gray-200">
       <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-6 tracking-tight">
-        Benvenuto su LoanMate
+        Benvenuto su Loan Mate
       </h1>
 
       <p className="text-gray-700 mb-6 text-center text-lg leading-relaxed">
-        LoanMate è la soluzione digitale pensata per privati e imprese che
+        Loan Mate è la soluzione digitale pensata per privati e imprese che
         desiderano <strong>gestire richieste di finanziamento</strong> in
         maniera rapida, sicura e trasparente. La nostra piattaforma unisce
         tecnologia all’avanguardia e competenza finanziaria per offrirti
