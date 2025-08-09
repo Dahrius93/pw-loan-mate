@@ -53,6 +53,7 @@ function App() {
         <>
           <LoginPage
             onLogged={(t, admin, _mail, nome) => {
+              void _mail;
               setAuthToken(t);
               setToken(t);
               setIsAdmin(admin);
@@ -74,6 +75,7 @@ function App() {
         <>
           <RegisterPage
             onRegistered={(t, _mail) => {
+              void _mail;
               setAuthToken(t);
               setToken(t);
               setIsAdmin(false);

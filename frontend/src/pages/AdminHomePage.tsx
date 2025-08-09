@@ -1,9 +1,13 @@
-import LoanList from "../components/LoanList";
+import LoanList, { type LoanRequest } from "../components/LoanList";
+import { UserDetailModal } from "../components/UserDetailModal";
 import { useState, useEffect } from "react";
 import { getUserProfile } from "../services/api";
 
 export default function AdminHomePage() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [selectedUser, setSelectedUser] = useState<LoanRequest["user"] | null>(
+    null
+  );
 
   useEffect(() => {
     getUserProfile()
@@ -22,7 +26,13 @@ export default function AdminHomePage() {
     <div>
       <div className="pt-2 px-2 md:px-8">
         <div className="w-full">
-          <LoanList isAdmin={isAdmin} />
+          <LoanList isAdmin={isAdmin} onUserClick={(u) => setSelectedUser(u)} />
+          {selectedUser && (
+            <UserDetailModal
+              user={selectedUser}
+              onClose={() => setSelectedUser(null)}
+            />
+          )}
           <div className="pt-16 pb-16"></div>
         </div>
       </div>
