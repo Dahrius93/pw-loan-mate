@@ -1,12 +1,10 @@
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
+  PieChart,
+  Pie,
   Tooltip,
-  CartesianGrid,
   ResponsiveContainer,
   Cell,
+  Label,
 } from "recharts";
 import { useEffect, useState } from "react";
 import { getLoanRequests } from "../services/api";
@@ -16,14 +14,11 @@ interface Props {
   userId: number;
 }
 
-interface TotaliAggregati {
-  categoria: string;
-  valore: number;
-  colore: string;
-}
+type Slice = { categoria: string; valore: number; colore: string };
 
 export default function LoanChart({ userId }: Props) {
-  const [data, setData] = useState<TotaliAggregati[]>([]);
+  const [data, setData] = useState<Slice[]>([]);
+  const [totaleRichiesto, setTotaleRichiesto] = useState(0);
 
   useEffect(() => {
     getLoanRequests().then((res: LoanRequest[]) => {
@@ -35,48 +30,81 @@ export default function LoanChart({ userId }: Props) {
 
       userRequests.forEach((r) => {
         if (typeof r.importo !== "number") return;
-
         richiesto += r.importo;
-
-        if (r.stato === "approvata") {
-          approvato += r.importo;
-        } else if (r.stato === "rifiutata") {
-          rifiutato += r.importo;
-        }
+        if (r.stato === "approvata") approvato += r.importo;
+        else if (r.stato === "rifiutata") rifiutato += r.importo;
       });
 
+      const pendente = Math.max(richiesto - approvato - rifiutato, 0);
+
+      setTotaleRichiesto(richiesto);
       setData([
-        { categoria: "Richiesto", valore: richiesto, colore: "#facc15" },
         { categoria: "Approvato", valore: approvato, colore: "#4ade80" },
         { categoria: "Rifiutato", valore: rifiutato, colore: "#f87171" },
+        ...(pendente > 0
+          ? [
+              {
+                categoria: "In valutazione",
+                valore: pendente,
+                colore: "#facc15",
+              },
+            ]
+          : []),
       ]);
     });
   }, [userId]);
 
+  const formatEuro = (v: number) =>
+    `€${v.toLocaleString("it-IT", { maximumFractionDigits: 0 })}`;
+
   return (
     <div className="mt-6">
       <h3 className="text-lg font-semibold text-center mb-2">Totali utente</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={data}
-          margin={{ top: 30, right: 30, left: 30, bottom: 20 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="categoria" />
-          <YAxis
-            tickFormatter={(value) =>
-              value >= 1000
-                ? `${(value / 1000).toFixed(0)}k€`
-                : value.toString()
-            }
-          />
-          <Tooltip />
-          <Bar dataKey="valore" isAnimationActive={false}>
-            {data.map((entry, index) => (
-              <Cell key={index} fill={entry.colore} />
+      <ResponsiveContainer width="100%" height={320}>
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="valore"
+            nameKey="categoria"
+            cx="50%"
+            cy="50%"
+            innerRadius={70}
+            outerRadius={110}
+            isAnimationActive={false}
+          >
+            {data.map((d, i) => (
+              <Cell key={i} fill={d.colore} />
             ))}
-          </Bar>
-        </BarChart>
+
+            {/* Etichette centrali (niente viewBox, niente tipi strani) */}
+            <Label
+              value="Richiesto"
+              position="center"
+              fill="#64748b"
+              fontSize={12}
+              dy={-8}
+            />
+            <Label
+              value={formatEuro(totaleRichiesto)}
+              position="center"
+              fill="#0f172a"
+              fontSize={16}
+              dy={12}
+            />
+          </Pie>
+
+          <Tooltip
+            formatter={(value, name) => {
+              const v = Number(value) || 0;
+              const perc =
+                totaleRichiesto > 0
+                  ? `${((v / totaleRichiesto) * 100).toFixed(1)}%`
+                  : "0%";
+              return [`${formatEuro(v)} (${perc})`, String(name)];
+            }}
+          />
+          {/* niente <Legend /> */}
+        </PieChart>
       </ResponsiveContainer>
     </div>
   );

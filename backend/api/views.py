@@ -55,12 +55,10 @@ class RegisterView(generics.CreateAPIView):
 
 
 class LoanRequestListCreate(generics.ListCreateAPIView):
-    """List user's loan requests or create a new one."""
 
     serializer_class = LoanRequestSerializer
 
     def get_queryset(self):
-        """Return all requests for admins or only the user's own."""
         user = self.request.user
         if user.is_staff:
             # Admins can view every loan request
@@ -69,18 +67,6 @@ class LoanRequestListCreate(generics.ListCreateAPIView):
         return LoanRequest.objects.filter(user=user)
 
     def perform_create(self, serializer):
-        """Save the new request assigning the current user as owner.
-
-        Parameters
-        ----------
-        serializer : LoanRequestSerializer
-            The serializer instance containing validated request data.
-
-        Returns
-        -------
-        LoanRequest
-            The newly created loan request instance.
-        """
         user = self.request.user
         if user.is_staff:
             # Prevent admins from creating requests on behalf of others

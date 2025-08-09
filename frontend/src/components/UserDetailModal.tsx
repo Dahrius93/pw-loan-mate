@@ -99,9 +99,6 @@ export function UserDetailModal({ onClose, user }: UserModalProps) {
           </div>
 
           <div className="mt-8 border-t border-gray-200" />
-          <h3 className="mt-6 text-center text-sm font-semibold text-gray-700">
-            Totali utente
-          </h3>
           <div className="mt-4 mx-auto w-full max-w-3xl">
             <LoanChart userId={user.id} />
           </div>

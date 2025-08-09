@@ -19,6 +19,7 @@ export interface LoanRequestPayload {
   importo: number
   motivo: string
 }
+
 export interface LoanUser { 
   id: number
   email: string

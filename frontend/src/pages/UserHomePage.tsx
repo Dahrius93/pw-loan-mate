@@ -1,6 +1,3 @@
-// =============================
-// UserHomePage
-// =============================
 import { useState, useEffect } from "react";
 import { getUserProfile } from "../services/api";
 import LoanList from "../components/LoanList";
@@ -32,15 +29,11 @@ export default function UserHomePage() {
         onNewRequest={() => setShowNewRequest(true)}
         onUserClick={(u) => setSelectedUser(u)}
       />
-
-      {/* Modale nuova richiesta - stesso comportamento/UX */}
       <LoanFormModal
         showModal={showNewRequest}
         onClose={() => setShowNewRequest(false)}
         onCreated={() => setRefresh((v) => !v)}
       />
-
-      {/* Modale dettagli utente - identico comportamento/UX */}
       {selectedUser && (
         <UserDetailModal
           user={selectedUser}
